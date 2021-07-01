@@ -1,4 +1,4 @@
-package it.unisannio.security;
+package it.unisannio.exception;
 
 import org.springframework.security.core.AuthenticationException;
 

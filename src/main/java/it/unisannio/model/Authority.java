@@ -1,4 +1,4 @@
-package it.unisannio.security.model;
+package it.unisannio.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

@@ -1,4 +1,4 @@
-package it.unisannio.security.model;
+package it.unisannio.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.BatchSize;

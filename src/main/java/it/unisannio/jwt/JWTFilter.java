@@ -1,4 +1,4 @@
-package it.unisannio.security.jwt;
+package it.unisannio.jwt;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+
+import static it.unisannio.SecurityUtils.resolveToken;
 
 /**
  * Filters incoming requests and installs a Spring Security principal if a header corresponding to a valid user is
@@ -34,7 +36,7 @@ public class JWTFilter extends GenericFilterBean {
    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
       throws IOException, ServletException {
       HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-      String jwt = resolveToken(httpServletRequest);
+      String jwt = resolveToken(httpServletRequest.getHeader(AUTHORIZATION_HEADER));
       String requestURI = httpServletRequest.getRequestURI();
 
       if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
@@ -46,13 +48,5 @@ public class JWTFilter extends GenericFilterBean {
       }
 
       filterChain.doFilter(servletRequest, servletResponse);
-   }
-
-   private String resolveToken(HttpServletRequest request) {
-      String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-      if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-         return bearerToken.substring(7);
-      }
-      return null;
    }
 }

@@ -1,12 +1,10 @@
-package it.unisannio.security.rest.dto;
+package it.unisannio.controller.dto;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
-/**
- * DTO for storing a user's credentials.
- */
-public class LoginDTO {
+public class LoginDTO implements Serializable {
 
    @NotNull
    @Size(min = 1, max = 50)
@@ -15,8 +13,6 @@ public class LoginDTO {
    @NotNull
    @Size(min = 4, max = 100)
    private String password;
-
-   private Boolean rememberMe;
 
    public String getUsername() {
       return username;
@@ -32,21 +28,5 @@ public class LoginDTO {
 
    public void setPassword(String password) {
       this.password = password;
-   }
-
-   public Boolean isRememberMe() {
-      return rememberMe;
-   }
-
-   public void setRememberMe(Boolean rememberMe) {
-      this.rememberMe = rememberMe;
-   }
-
-   @Override
-   public String toString() {
-      return "LoginVM{" +
-         "username='" + username + '\'' +
-         ", rememberMe=" + rememberMe +
-         '}';
    }
 }

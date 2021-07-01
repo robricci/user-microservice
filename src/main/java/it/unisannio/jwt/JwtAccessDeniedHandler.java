@@ -1,4 +1,4 @@
-package it.unisannio.security;
+package it.unisannio.jwt;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;

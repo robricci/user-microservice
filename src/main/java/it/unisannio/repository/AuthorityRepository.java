@@ -1,8 +1,8 @@
-package it.unisannio.security.repository;
+package it.unisannio.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import it.unisannio.security.model.Authority;
+import it.unisannio.model.Authority;
 
 /**
  * Spring Data JPA repository for the {@link Authority} entity.

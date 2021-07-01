@@ -1,4 +1,4 @@
-package it.unisannio.security;
+package it.unisannio.jwt;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;

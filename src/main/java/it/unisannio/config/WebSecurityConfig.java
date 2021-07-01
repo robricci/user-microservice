@@ -13,10 +13,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 
-import it.unisannio.security.JwtAccessDeniedHandler;
-import it.unisannio.security.JwtAuthenticationEntryPoint;
-import it.unisannio.security.jwt.JWTConfigurer;
-import it.unisannio.security.jwt.TokenProvider;
+import it.unisannio.jwt.JwtAccessDeniedHandler;
+import it.unisannio.jwt.JwtAuthenticationEntryPoint;
+import it.unisannio.jwt.JWTConfigurer;
+import it.unisannio.jwt.TokenProvider;
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -92,14 +92,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
          .and()
          .authorizeRequests()
-         .antMatchers("/api/authenticate").permitAll()
-         // .antMatchers("/api/register").permitAll()
-         // .antMatchers("/api/activate").permitAll()
-         // .antMatchers("/api/account/reset-password/init").permitAll()
-         // .antMatchers("/api/account/reset-password/finish").permitAll()
-
-         .antMatchers("/api/person").hasAuthority("ROLE_USER")
-         .antMatchers("/api/hiddenmessage").hasAuthority("ROLE_ADMIN")
+         .antMatchers("/api/users/**").permitAll()
 
          .anyRequest().authenticated()
 

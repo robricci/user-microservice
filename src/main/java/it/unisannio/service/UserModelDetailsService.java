@@ -1,5 +1,6 @@
-package it.unisannio.security;
+package it.unisannio.service;
 
+import it.unisannio.exception.UserNotActivatedException;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import it.unisannio.security.model.User;
-import it.unisannio.security.repository.UserRepository;
+import it.unisannio.model.User;
+import it.unisannio.repository.UserRepository;
 
 import java.util.List;
 import java.util.Locale;
