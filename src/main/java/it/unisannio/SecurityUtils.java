@@ -42,9 +42,10 @@ public class SecurityUtils {
    }
 
    public static String resolveToken(String bearerToken) {
+      String token = bearerToken;
       if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-         return bearerToken.substring(7);
+         token = bearerToken.substring(7);
       }
-      return null;
+      return token;
    }
 }

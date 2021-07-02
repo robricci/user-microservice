@@ -5,26 +5,15 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import it.unisannio.controller.dto.RegisterDTO;
 import it.unisannio.controller.dto.SessionDTO;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import it.unisannio.service.UserService;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import it.unisannio.jwt.JWTFilter;
-import it.unisannio.jwt.TokenProvider;
 import it.unisannio.controller.dto.JWTTokenDTO;
 import it.unisannio.controller.dto.LoginDTO;
-
-import java.util.stream.Collectors;
-
-import static it.unisannio.SecurityUtils.resolveToken;
 
 
 @Consumes(MediaType.APPLICATION_JSON)
@@ -33,43 +22,40 @@ import static it.unisannio.SecurityUtils.resolveToken;
 @Path("/users")
 public class AuthenticationRestController {
 
-	private final TokenProvider tokenProvider;
-	private final AuthenticationManagerBuilder authenticationManagerBuilder;
+	private final UserService userService;
 
-	public AuthenticationRestController(TokenProvider tokenProvider,
-			AuthenticationManagerBuilder authenticationManagerBuilder) {
-		this.tokenProvider = tokenProvider;
-		this.authenticationManagerBuilder = authenticationManagerBuilder;
+	public AuthenticationRestController(UserService userService) {
+		this.userService = userService;
 	}
 
 	@POST
 	@Path("/login")
 	public Response login(@Valid LoginDTO loginDto) {
-
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-				loginDto.getUsername(), loginDto.getPassword());
-
-		Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-
-		String jwt = tokenProvider.createToken(authentication);
-
-		return Response.ok(new JWTTokenDTO(jwt))
-				.header(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt)
-				.build();
+		JWTTokenDTO jwtToken = null;
+		try {
+			jwtToken = this.userService.loginUser(loginDto);
+		} catch (BadCredentialsException e) {
+			System.out.println("Login '" + loginDto.getUsername() + "' BadCredentialsException");
+		}
+		return responseWithJwt(jwtToken);
 	}
 
 	@POST
 	@Path("/register")
-	public Response register(@Valid LoginDTO loginDto) {
-
-		return Response.ok().build();
+	public Response register(@Valid RegisterDTO registerDTO) {
+		JWTTokenDTO jwtToken = null;
+		try {
+			jwtToken = this.userService.registerUser(registerDTO);
+		} catch (BadCredentialsException e) {
+			System.out.println("Register&Login '" + registerDTO.getUsername() + "' BadCredentialsException");
+		}
+		return responseWithJwt(jwtToken);
 	}
 
 	@POST
 	@Path("/forgot-password")
-	public Response forgotPassword(@Valid LoginDTO loginDto) {
-
+	public Response forgotPassword() {
+		// TODO
 		return Response.ok().build();
 	}
 
@@ -77,16 +63,17 @@ public class AuthenticationRestController {
 	@Path("/validate-session")
 	@Consumes(MediaType.TEXT_PLAIN)
 	public Response validateSession(String token) {
-		SessionDTO session = new SessionDTO();
-		String jwt = resolveToken(token);
-		if (tokenProvider.validateToken(jwt)) {
-			Authentication authentication = tokenProvider.getAuthentication(jwt);
-			session.setAuthenticated(true);
-			session.setRoles(authentication.getAuthorities().stream()
-					.map(GrantedAuthority::getAuthority)
-					.collect(Collectors.toList()));
-		}
+		SessionDTO session = this.userService.validateToken(token);
 		return Response.ok(session).build();
+	}
+
+	private Response responseWithJwt(JWTTokenDTO jwtToken) {
+		if (jwtToken != null)
+			return Response.ok(jwtToken)
+					.header(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwtToken.getJwt())
+					.build();
+
+		return Response.status(Response.Status.UNAUTHORIZED).build();
 	}
 
 }
