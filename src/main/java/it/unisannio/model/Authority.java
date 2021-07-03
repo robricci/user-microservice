@@ -1,5 +1,7 @@
 package it.unisannio.model;
 
+import it.unisannio.Role;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -11,19 +13,20 @@ public class Authority {
    @Id
    @Column(length = 50)
    @NotNull
-   private String name;
+   @Enumerated(EnumType.STRING)
+   private Role name;
 
    public Authority() { }
 
-   public Authority(@NotNull String name) {
+   public Authority(@NotNull Role name) {
       this.name = name;
    }
 
-   public String getName() {
+   public Role getName() {
       return name;
    }
 
-   public void setName(String name) {
+   public void setName(Role name) {
       this.name = name;
    }
 

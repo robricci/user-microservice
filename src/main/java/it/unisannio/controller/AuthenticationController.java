@@ -20,11 +20,11 @@ import it.unisannio.controller.dto.LoginDTO;
 @Produces(MediaType.APPLICATION_JSON)
 @Component
 @Path("/users")
-public class AuthenticationRestController {
+public class AuthenticationController {
 
 	private final UserService userService;
 
-	public AuthenticationRestController(UserService userService) {
+	public AuthenticationController(UserService userService) {
 		this.userService = userService;
 	}
 

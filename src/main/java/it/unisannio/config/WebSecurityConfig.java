@@ -22,85 +22,85 @@ import it.unisannio.jwt.TokenProvider;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-   private final TokenProvider tokenProvider;
-   private final CorsFilter corsFilter;
-   private final JwtAuthenticationEntryPoint authenticationErrorHandler;
-   private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final TokenProvider tokenProvider;
+    private final CorsFilter corsFilter;
+    private final JwtAuthenticationEntryPoint authenticationErrorHandler;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
-   public WebSecurityConfig(
-      TokenProvider tokenProvider,
-      CorsFilter corsFilter,
-      JwtAuthenticationEntryPoint authenticationErrorHandler,
-      JwtAccessDeniedHandler jwtAccessDeniedHandler
-   ) {
-      this.tokenProvider = tokenProvider;
-      this.corsFilter = corsFilter;
-      this.authenticationErrorHandler = authenticationErrorHandler;
-      this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
-   }
+    public WebSecurityConfig(
+            TokenProvider tokenProvider,
+            CorsFilter corsFilter,
+            JwtAuthenticationEntryPoint authenticationErrorHandler,
+            JwtAccessDeniedHandler jwtAccessDeniedHandler
+    ) {
+        this.tokenProvider = tokenProvider;
+        this.corsFilter = corsFilter;
+        this.authenticationErrorHandler = authenticationErrorHandler;
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
+    }
 
-   // Configure BCrypt password encoder =====================================================================
+    // Configure BCrypt password encoder =====================================================================
 
-   @Bean
-   public PasswordEncoder passwordEncoder() {
-      return new BCryptPasswordEncoder();
-   }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-   // Configure paths and requests that should be ignored by Spring Security ================================
+    // Configure paths and requests that should be ignored by Spring Security ================================
 
-   @Override
-   public void configure(WebSecurity web) {
-      web.ignoring()
-         .antMatchers(HttpMethod.OPTIONS, "/**")
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring()
+                .antMatchers(HttpMethod.OPTIONS, "/**")
 
-         // allow anonymous resource requests
-         .antMatchers(
-            "/",
-            "/*.html",
-            "/favicon.ico",
-            "/**/*.html",
-            "/**/*.css",
-            "/**/*.js",
-            "/h2-console/**"
-         );
-   }
+                // allow anonymous resource requests
+                .antMatchers(
+                        "/",
+                        "/*.html",
+                        "/favicon.ico",
+                        "/**/*.html",
+                        "/**/*.css",
+                        "/**/*.js",
+                        "/h2-console/**"
+                );
+    }
 
-   // Configure security settings ===========================================================================
+    // Configure security settings ===========================================================================
 
-   @Override
-   protected void configure(HttpSecurity httpSecurity) throws Exception {
-      httpSecurity
-         // we don't need CSRF because our token is invulnerable
-         .csrf().disable()
+    @Override
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+                // we don't need CSRF because our token is invulnerable
+                .csrf().disable()
 
-         .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
 
-         .exceptionHandling()
-         .authenticationEntryPoint(authenticationErrorHandler)
-         .accessDeniedHandler(jwtAccessDeniedHandler)
+                .exceptionHandling()
+                .authenticationEntryPoint(authenticationErrorHandler)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
 
-         // enable h2-console
-         .and()
-         .headers()
-         .frameOptions()
-         .sameOrigin()
+                // enable h2-console
+                .and()
+                .headers()
+                .frameOptions()
+                .sameOrigin()
 
-         // create no session
-         .and()
-         .sessionManagement()
-         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                // create no session
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-         .and()
-         .authorizeRequests()
-         .antMatchers("/api/users/**").permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/api/users/**").permitAll()
+                .antMatchers("/api/tickets/{[a-zA-Z0-9]+}/validate").permitAll()
+                .anyRequest().authenticated()
 
-         .anyRequest().authenticated()
+                .and()
+                .apply(securityConfigurerAdapter());
+    }
 
-         .and()
-         .apply(securityConfigurerAdapter());
-   }
-
-   private JWTConfigurer securityConfigurerAdapter() {
-      return new JWTConfigurer(tokenProvider);
-   }
+    private JWTConfigurer securityConfigurerAdapter() {
+        return new JWTConfigurer(tokenProvider);
+    }
 }

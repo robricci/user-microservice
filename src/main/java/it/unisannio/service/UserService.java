@@ -1,5 +1,6 @@
 package it.unisannio.service;
 
+import it.unisannio.Role;
 import it.unisannio.controller.dto.JWTTokenDTO;
 import it.unisannio.controller.dto.LoginDTO;
 import it.unisannio.controller.dto.RegisterDTO;
@@ -66,7 +67,7 @@ public class UserService {
       user.setUsername(registerDto.getUsername());
       user.setPassword(this.passwordEncoder.encode(registerDto.getPassword()));
       user.setActivated(true);
-      user.setAuthorities(new HashSet<>(Collections.singletonList(new Authority("ROLE_PASSENGER"))));
+      user.setAuthorities(new HashSet<>(Collections.singletonList(new Authority(Role.ROLE_PASSENGER))));
 
       User reg_user = this.userRepository.save(user);
 

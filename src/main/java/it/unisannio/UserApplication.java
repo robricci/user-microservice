@@ -1,6 +1,7 @@
 package it.unisannio;
 
-import it.unisannio.controller.AuthenticationRestController;
+import it.unisannio.controller.AuthenticationController;
+import it.unisannio.controller.TicketController;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,7 +15,8 @@ import javax.ws.rs.ApplicationPath;
 public class UserApplication extends ResourceConfig {
 
     public UserApplication() {
-        register(AuthenticationRestController.class);
+        register(AuthenticationController.class);
+        register(TicketController.class);
     }
 
     public static void main(String[] args) {
