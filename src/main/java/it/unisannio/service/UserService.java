@@ -1,7 +1,6 @@
 package it.unisannio.service;
 
 import it.unisannio.Role;
-import it.unisannio.controller.dto.JWTTokenDTO;
 import it.unisannio.controller.dto.LoginDTO;
 import it.unisannio.controller.dto.RegisterDTO;
 import it.unisannio.controller.dto.SessionDTO;

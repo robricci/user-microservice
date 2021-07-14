@@ -12,7 +12,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 
 import it.unisannio.jwt.JWTFilter;
-import it.unisannio.controller.dto.JWTTokenDTO;
 import it.unisannio.controller.dto.LoginDTO;
 
 
