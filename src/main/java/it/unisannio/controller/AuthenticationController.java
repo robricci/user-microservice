@@ -31,25 +31,25 @@ public class AuthenticationController {
 	@POST
 	@Path("/login")
 	public Response login(@Valid LoginDTO loginDto) {
-		JWTTokenDTO jwtToken = null;
+		SessionDTO session = null;
 		try {
-			jwtToken = this.userService.loginUser(loginDto);
+			session = this.userService.loginUser(loginDto);
 		} catch (BadCredentialsException e) {
 			System.out.println("Login '" + loginDto.getUsername() + "' BadCredentialsException");
 		}
-		return responseWithJwt(jwtToken);
+		return responseWithJwt(session);
 	}
 
 	@POST
 	@Path("/register")
 	public Response register(@Valid RegisterDTO registerDTO) {
-		JWTTokenDTO jwtToken = null;
+		SessionDTO session = null;
 		try {
-			jwtToken = this.userService.registerUser(registerDTO);
+			session = this.userService.registerUser(registerDTO);
 		} catch (BadCredentialsException e) {
 			System.out.println("Register&Login '" + registerDTO.getUsername() + "' BadCredentialsException");
 		}
-		return responseWithJwt(jwtToken);
+		return responseWithJwt(session);
 	}
 
 	@POST
@@ -64,13 +64,14 @@ public class AuthenticationController {
 	@Consumes(MediaType.TEXT_PLAIN)
 	public Response validateSession(String token) {
 		SessionDTO session = this.userService.validateToken(token);
-		return Response.ok(session).build();
+		return Response.status(session.getJwt() != null ? Response.Status.OK : Response.Status.UNAUTHORIZED)
+				.entity(session).build();
 	}
 
-	private Response responseWithJwt(JWTTokenDTO jwtToken) {
-		if (jwtToken != null)
-			return Response.ok(jwtToken)
-					.header(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwtToken.getJwt())
+	private Response responseWithJwt(SessionDTO session) {
+		if (session != null && session.getJwt() != null)
+			return Response.ok(session)
+					.header(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + session.getJwt())
 					.build();
 
 		return Response.status(Response.Status.UNAUTHORIZED).build();

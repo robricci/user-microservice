@@ -5,22 +5,22 @@ import java.util.List;
 
 public class SessionDTO implements Serializable {
 
-    private boolean authenticated;
+    private String jwt;
     private List<String> roles;
 
     public SessionDTO() { }
 
-    public SessionDTO(boolean authenticated, List<String> roles) {
-        this.authenticated = authenticated;
+    public SessionDTO(String jwt, List<String> roles) {
+        this.jwt = jwt;
         this.roles = roles;
     }
 
-    public boolean isAuthenticated() {
-        return authenticated;
+    public String getJwt() {
+        return jwt;
     }
 
-    public void setAuthenticated(boolean authenticated) {
-        this.authenticated = authenticated;
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
     }
 
     public List<String> getRoles() {

@@ -49,17 +49,23 @@ public class UserService {
       return SecurityUtils.getCurrentUsername().flatMap(userRepository::findOneWithAuthoritiesByUsername);
    }
 
-   public JWTTokenDTO loginUser(LoginDTO loginDto) {
+   public SessionDTO loginUser(LoginDTO loginDto) {
       UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
               loginDto.getUsername(), loginDto.getPassword());
 
       Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
       SecurityContextHolder.getContext().setAuthentication(authentication);
 
-      return new JWTTokenDTO(tokenProvider.createToken(authentication));
+      SessionDTO sessionDTO = new SessionDTO();
+      sessionDTO.setJwt(tokenProvider.createToken(authentication));
+      sessionDTO.setRoles(authentication.getAuthorities().stream()
+              .map(GrantedAuthority::getAuthority)
+              .collect(Collectors.toList()));
+
+      return sessionDTO;
    }
 
-   public JWTTokenDTO registerUser(RegisterDTO registerDto) {
+   public SessionDTO registerUser(RegisterDTO registerDto) {
       User user = new User();
       user.setFirstname(registerDto.getFirstname());
       user.setLastname(registerDto.getLastname());
@@ -79,7 +85,7 @@ public class UserService {
       String jwt = resolveToken(token);
       if (tokenProvider.validateToken(jwt)) {
          Authentication authentication = tokenProvider.getAuthentication(jwt);
-         session.setAuthenticated(true);
+         session.setJwt(jwt);
          session.setRoles(authentication.getAuthorities().stream()
                  .map(GrantedAuthority::getAuthority)
                  .collect(Collectors.toList()));
