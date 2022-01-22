@@ -3,6 +3,8 @@ os : linux
 jdk: oraclejdk11
 script: ./mvnw install
 
+before_install:
+  - chmod +x mvnw
 
 notifications:
   on_success: always
