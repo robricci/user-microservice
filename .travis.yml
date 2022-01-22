@@ -1,6 +1,8 @@
 language: java
-script: mvn install
-version: oraclejdk11
+os : linux
+jdk: oraclejdk11
+script: ./mvnw install
+
 
 notifications:
   on_success: always
