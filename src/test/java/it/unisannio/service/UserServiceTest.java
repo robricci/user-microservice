@@ -55,7 +55,12 @@ class UserServiceTest {
 
     @Test
     void registerUser() {
-        RegisterDTO registerDTO = new RegisterDTO(username2, password2, firstName, lastName, email);
+        RegisterDTO registerDTO = new RegisterDTO();
+        registerDTO.setUsername(username2);
+        registerDTO.setPassword(password2);
+        registerDTO.setFirstname(firstName);
+        registerDTO.setLastname(lastName);
+        registerDTO.setEmail(email);
         SessionDTO sessionDTO2 = userService.registerUser(registerDTO);
 
         assertTrue(sessionDTO2.getRoles().get(0).equals("ROLE_PASSENGER"));
