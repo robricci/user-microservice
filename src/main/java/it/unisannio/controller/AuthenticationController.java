@@ -51,12 +51,6 @@ public class AuthenticationController {
 		return responseWithJwt(session);
 	}
 
-	@POST
-	@Path("/forgot-password")
-	public Response forgotPassword() {
-		// TODO
-		return Response.ok().build();
-	}
 
 	@POST
 	@Path("/validate-session")

@@ -1,8 +1,10 @@
 package it.unisannio.controller;
 
+import com.google.gson.JsonObject;
 import it.unisannio.controller.dto.LoginDTO;
 import it.unisannio.controller.dto.SessionDTO;
 import it.unisannio.controller.dto.TicketDTO;
+import it.unisannio.model.Ticket;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +28,17 @@ class TicketControllerTest {
     @Test
     void getOneTimeTicket() {
 
+        //BlackBox Testing
         MockHttpServletRequest request = new MockHttpServletRequest();
         LoginDTO loginDTO = new LoginDTO("passenger", "password");
         Response response = authenticationController.login(loginDTO);
         SessionDTO sessionDTO = (SessionDTO) response.getEntity();
         request.addHeader("Authorization", "Bearer " + sessionDTO.getJwt());
         response = ticketController.getOneTimeTicket(request);
+        TicketDTO ticketDTO = (TicketDTO) response.getEntity();
 
         assertTrue(response.getStatus()==200);
+        assertNotNull(ticketDTO.getOneTimeTicket());
 
 
     }
@@ -41,6 +46,7 @@ class TicketControllerTest {
     @Test
     void validateOneTimeTicket() {
 
+        //BlackBox Testing
         MockHttpServletRequest request = new MockHttpServletRequest();
         LoginDTO loginDTO = new LoginDTO("passenger", "password");
         Response response = authenticationController.login(loginDTO);
@@ -49,8 +55,13 @@ class TicketControllerTest {
         response = ticketController.getOneTimeTicket(request);
         TicketDTO ticketDTO = (TicketDTO) response.getEntity();
         response = ticketController.validateOneTimeTicket(ticketDTO.getOneTimeTicket(), request);
-
         assertEquals(response.getStatus(), 202);
+
+        //WhiteBoxTesting
+        ticketDTO.setOneTimeTicket("");
+        response = ticketController.validateOneTimeTicket(ticketDTO.getOneTimeTicket(), request);
+        assertEquals(response.getStatus(), 406);
+
 
     }
 }
