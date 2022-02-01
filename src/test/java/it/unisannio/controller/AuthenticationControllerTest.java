@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -62,12 +63,19 @@ class AuthenticationControllerTest {
     void register() {
 
         // BlackBox Testing
-        RegisterDTO registerDTO = new RegisterDTO("rbricci", "12345678", "roberto", "ricci", "rob@gmail.com");
+        RegisterDTO registerDTO = new RegisterDTO("robricci", "12345678", "roberto", "ricci", "rob@gmail.com");
         Response response = authenticationController.register(registerDTO);
         SessionDTO sessionDTO = (SessionDTO) response.getEntity();
         assertTrue(response.getStatus()==200);
         assertTrue(sessionDTO.getJwt()!=null);
         assertTrue(sessionDTO.getRoles().get(0).equals("ROLE_PASSENGER"));
+
+        // Register new User with already existing username
+        RegisterDTO registerDTO2 = new RegisterDTO("passenger", "12345678", "Luca", "Ricci", "lricci@gmail.com");
+        DataIntegrityViolationException exception = assertThrows(DataIntegrityViolationException.class, () -> {
+            authenticationController.register(registerDTO);
+        });
+
 
     }
 

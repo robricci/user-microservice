@@ -3,7 +3,6 @@ package it.unisannio.service;
 import it.unisannio.controller.dto.LoginDTO;
 import it.unisannio.controller.dto.RegisterDTO;
 import it.unisannio.controller.dto.SessionDTO;
-import it.unisannio.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,16 +45,8 @@ class UserServiceTest {
 
     }
 
-
-
     @Test
-    void getUserWithAuthorities() {
-        assertTrue(true);
-    }
-
-
-    @Test
-    void registerUser() {
+    void registerUser()  {
         RegisterDTO registerDTO = new RegisterDTO();
         registerDTO.setUsername(username2);
         registerDTO.setPassword(password2);

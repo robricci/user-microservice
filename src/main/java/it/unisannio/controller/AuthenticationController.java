@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 import it.unisannio.controller.dto.RegisterDTO;
 import it.unisannio.controller.dto.SessionDTO;
 import it.unisannio.service.UserService;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 
@@ -41,13 +42,10 @@ public class AuthenticationController {
 
 	@POST
 	@Path("/register")
-	public Response register(@Valid RegisterDTO registerDTO) {
+	public Response register(@Valid RegisterDTO registerDTO) throws DataIntegrityViolationException{
 		SessionDTO session = null;
-		try {
-			session = this.userService.registerUser(registerDTO);
-		} catch (BadCredentialsException e) {
-			System.out.println("Register&Login '" + registerDTO.getUsername() + "' BadCredentialsException");
-		}
+		session = this.userService.registerUser(registerDTO);
+
 		return responseWithJwt(session);
 	}
 
