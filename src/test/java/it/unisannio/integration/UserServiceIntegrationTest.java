@@ -21,8 +21,6 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.core.IsNull.notNullValue;
 
-
-
 @EnableAutoConfiguration(exclude = SecurityAutoConfiguration.class)
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -68,12 +66,10 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void login() throws Exception {
+    public void login_registered_user() throws Exception {
         loginDTO1 = new LoginDTO("passenger", "password");
-        loginDTO2 = new LoginDTO("robricci", "password");
 
         // Login registered User
-        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
         given()
                 .contentType("application/json")
                 .body(asJsonString(loginDTO1))
@@ -85,25 +81,26 @@ public class UserServiceIntegrationTest {
                 .body("jwt", notNullValue())
                 .body("roles", contains("ROLE_PASSENGER"));
 
-
-        // Login unregistered User - Bad credential Exception
-        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
-        given()
-                .contentType("application/json")
-                .body(asJsonString(loginDTO2))
-        .when()
-                .post("http://localhost:9091/api/users/login")
-        .then()
-                .statusCode(401);
-
-
         }
 
     @Test
-    public void register() throws Exception {
+    public void login_unregistered_user() throws Exception {
+        loginDTO2 = new LoginDTO("robricci", "password");
+
+        // Login unregistered User - Bad credential Exception
+        given()
+                .contentType("application/json")
+                .body(asJsonString(loginDTO2))
+                .when()
+                .post("http://localhost:9091/api/users/login")
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    public void register_new_user() throws Exception {
 
      //Register new User
-     RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
      given()
              .contentType("application/json")
              .body(asJsonString(registerDTO1))
@@ -115,18 +112,20 @@ public class UserServiceIntegrationTest {
                 .body("jwt", notNullValue())
                 .body("roles", contains("ROLE_PASSENGER"));
 
-     // Register new User with already existing username
-        RestAssured.enableLoggingOfRequestAndResponseIfValidationFails();
+    }
+
+    @Test
+    public void register_user_with_already_existing_username() throws Exception {
+
+        // Register new User with already existing username
         given()
                 .contentType("application/json")
                 .body(asJsonString(registerDTO2))
-        .when()
+                .when()
                 .post("http://localhost:9091/api/users/register")
-        .then()
+                .then()
                 .statusCode(500);
-
     }
-
 
     public static String asJsonString(final Object obj) {
         try {
